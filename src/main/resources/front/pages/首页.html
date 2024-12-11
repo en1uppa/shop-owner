@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>    body {
+    font-family: 'Noto Serif SC', serif;
+    background-color: #F5DEB3; /* 茶色背景 */
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    text-align: center;
+    color: #5D4037; /* 深茶色标题 */
+    margin-bottom: 20px;
+  }
+  /* 调整超链接样式 */
+  a {
+    float:right;
+    color: #8B4513; /* 赭石色作为链接的基本颜色 */
+    text-decoration: none;
+    transition: color 0.3s ease; /* 平滑过渡效果 */
+    margin-right: 10px;
+  }
+  a:hover {
+    color: #A0522D; /* 悬停时颜色略深，以增加交互感 */
+    text-decoration: underline;
+  }
+  .product img {
+    margin-left: 20px;
+    float:left;
+    width: 150px; /* 你可以根据需要调整这个值 */
+    height: 150px; /* 如果设置了固定高度，需要确保与width配合使用，否则可能导致图片变形 */
+    object-fit: cover; /* 确保图片覆盖整个容器，可能会有部分图片内容不可见 */
+    border-radius: 4px; /* 添加边框圆角 */
+    display: block; /* 确保img元素作为块级元素显示 */
+    margin-right: 20px; /* 为图片与详情之间的间隔添加外边距 */
+  }
+
+  .product {
+    margin-left: 30px;
+    /*圆角*/
+    border-radius: 15px;
+    width: 1450px;
+    background-color: #d7be8b;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  </style>
+</head>
+<body>
+<h1>小仲购物</h1>
+&nbsp;&nbsp;
+<a href="用户注册.html">注册</a>
+<a href="用户登录.html">用户登录|</a>
+<a href="店家登录.html">店家登录|</a>
+
+</div>
+<br/><br/><br/>
+<div class="productList" id="productList">
+
+</div>
+<script>
+  function fetchProducts() {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log("打印测试"+xhr.responseText)
+        const products = JSON.parse(xhr.responseText);
+        displayProducts(products);
+      } else if (xhr.readyState === 4) {
+        console.error('Fetch problem:', xhr.statusText);
+      }
+    };
+
+    xhr.open('GET', 'http://localhost:8080/user/product/list', true);
+    xhr.send();
+  }
+
+  // 显示产品列表
+  function displayProducts(products) {
+    const productList = document.getElementById('productList');//获取模块元素
+    productList.innerHTML = ''; //初始化
+
+    products.forEach(product => {
+      const product_id=product.product_id;
+      console.log("获取到的后端的产品id为: "+product_id)
+      const productDiv = document.createElement('div');//创建div
+      productDiv.className = 'product';//设置类名
+
+      productDiv.innerHTML = `
+
+        <div onclick="sendProductId(${product_id})">
+          <br />
+            <img src="${product.image_url}" alt="${product.product_name}"">
+            <div style="flex: 1;float:left;">
+              <p style="font-size: 18px; margin-bottom: 5px;">商品名称: ${product.product_name}</p>
+              <p style="font-size: 14px; color: #999; margin-bottom: 10px;">商品库存数量: ${product.product_num}</p>
+              <p style="font-size: 14px; line-height: 1.5;">商品描述: ${product.description}</p>
+              <p style="font-size: 16px; color: #f00; margin-bottom: 5px;"><b style="font-size: 25px;">￥${product.product_price}</b></p>
+          <br />
+          </div>
+        </div>
+        `;
+      productList.appendChild(productDiv);
+    });
+  }
+  function sendProductId(product_id){
+    console.log("获取到的'前端'的产品id为: "+product_id)
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `http://localhost:8080/user/product/getById/`+product_id, true);
+
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText);
+      }
+    };
+    xhr.send();
+    window.location.href = `http://localhost:8080/front/pages/游客商品详情.html?product_id=`+product_id;
+  }
+  fetchProducts()
+</script>
+
+</body>
+</html>
+

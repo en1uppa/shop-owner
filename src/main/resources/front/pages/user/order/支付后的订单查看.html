@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单展示</title>
+    <style>
+        body {
+            background-color: #f5deb3;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .profile-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            width: 40%;
+            margin: 50px auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        img.profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .product-item{
+            /*边框设置*/
+            border: 1px solid #ccc;
+            /*设置每个模块间的距离*/
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>订单展示详情</h1>
+<div id="cartVoInfo" class="cartVo-card"></div>
+<script>
+    const userId=localStorage.getItem('user_id')
+    // const userId=1
+    async function fetchcartVoProfile() {
+        try {
+            const response = await fetch(`http://localhost:8080/user/cart/getByUserId/`+userId);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            console.log("打印测试response"+response)
+            console.log("打印测试response.statusText"+response.statusText)
+
+            const cartVoProfile = await response.json();
+            displayCartVoProfile(cartVoProfile);
+        } catch (error) {
+            console.error('Fetch problem:', error);
+            document.getElementById('cartVoInfo').innerText = "获取购物车详情信息失败，请重试。";
+        }
+    }
+
+    function displayCartVoProfile(cartVo) {
+        let htmlContent = `<p>全部商品总额: ${cartVo.total_price}</p>`; // 展示总额
+
+        const user_id=localStorage.getItem('user_id')
+        // 遍历 productVoList 数组来构建商品信息
+        if (cartVo.productVoList && Array.isArray(cartVo.productVoList)) {
+            cartVo.productVoList.forEach((productVo, index) => {
+                // 假设每个 productVo 包含 name, imageUrl, type, price 等属性
+                htmlContent += `
+              <div>
+              <div class="product-item">
+                <p><img src="${productVo.image_url}" alt="Product Image" style="height: 80px;width: 80px"/></p>
+                <p>商品名: ${productVo.product_name}</p>
+                <p>产品价格: ${productVo.product_price}</p>
+                <p>购买数量: ${productVo.buy_num}</p>
+              </div>
+              </div>
+            `;
+            });
+        }
+
+        // 设置到 cartVoInfo 元素的 innerHTML
+        cartVoInfo.innerHTML = htmlContent;
+    }
+    // 初始化页面时获取购物车详情信息
+    fetchcartVoProfile();
+</script>
+</body>
+</html>

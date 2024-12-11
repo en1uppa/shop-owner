@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: #F5DEB3; /* 茶色背景 */
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }.Box {
+             background-color: #fff;
+             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+             border-radius: 4px;
+             padding: 20px;
+             width: 100%;
+             max-width: 400px;
+             margin: 30px auto;
+         }
+
+        .Box h3 {
+            color: #5D4037;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .Box .desc {
+            color: #777;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .Box input {
+            display: block;
+            width: 94%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .Box input[type="submit"] {
+            background-color: #8B4513; /* 赭石色背景 */
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+        }
+
+        .Box input[type="submit"]:hover {
+            background-color: #A0522D; /* 悬停时颜色略深 */
+        }
+
+
+    </style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/bubbly-bg@0.2.3/dist/bubbly-bg.js"></script>
+<body>
+<body>
+<div class="Box" style="background:#d7be8b;">
+    <form action="/product/login">
+        <h3>添加商品</h3>
+        <p class="desc">WELCOME TO ADD PRODUCT</p>
+        <input type="text" placeholder="请输入商品名" required>
+        <input type="number" placeholder="请输入商品价格" required>
+        <input type="number" placeholder="请输入商品数量" >
+        <input type="text" placeholder="请输入商品的描述" >
+        <input type="text" placeholder="请输入商品的图片地址" >
+        <input type="text" placeholder="请输入商品的类型" >
+        <input type="submit" class="loginBtn" value="立即添加"></button>
+    </form>
+</div>
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // 阻止表单默认提交
+
+            var product_name = document.querySelector('input[type="text"]').value;
+            var product_price = document.querySelector('input[type="number"]').value;
+            var product_num = document.querySelector('input[type="number"]').value;
+            var description = document.querySelector('input[type="text"]').value;
+            var image_url = document.querySelector('input[type="text"]').value;
+            var product_type = document.querySelector('input[type="text"]').value;
+
+            var product = {
+                product_name: product_name,
+                product_price: product_price,
+                product_num: product_num,
+                description: description,
+                image_url: image_url,
+                product_type: product_type
+            };
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/keeper/product/add', true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+            xhr.onload = function () {
+                console.log(typeof xhr.responseText)
+                if (xhr.responseText !== "0") {
+                    const product_id=xhr.responseText;
+                    window.location.href = "../pages/keeper/product/首页展示.html";
+                } else {
+                    alert('添加失败：' + xhr.responseText);
+                }
+            };
+            xhr.onerror = function () {
+                console.error('网络错误，请稍后再试');
+                alert('网络错误，请稍后再试');
+            };
+            xhr.send(JSON.stringify(product));
+        });
+    });
+</script>
+</body>
+</html>

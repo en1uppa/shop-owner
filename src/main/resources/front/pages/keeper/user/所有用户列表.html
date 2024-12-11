@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Noto Serif SC', serif;
+      background-color: #F5DEB3; /* 茶色背景 */
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      color: #5D4037; /* 深茶色标题 */
+      margin-bottom: 20px;
+    }
+    .userList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      justify-content: center;
+    }
+    .user {
+      background-color: #d7be8b;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      padding: 20px;
+      text-align: left;
+    }
+    .user p {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<h1>所有用户信息</h1>
+<div class="userList" id="userList" style="background:#d7be8b;">
+</div>
+<script>
+  function fetchUsers() {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        const users = JSON.parse(xhr.responseText);
+        displayUsers(users);
+      } else if (xhr.readyState === 4) {
+        console.error('Fetch problem:', xhr.statusText);
+      }
+    };
+    xhr.open('GET', 'http://localhost:8080/keeper/user/list', true); // 假设API路径
+    xhr.send();
+  }
+
+  function displayUsers(users) {
+    const userList = document.getElementById('userList');
+    userList.innerHTML = ''; // 清空现有内容
+    users.forEach(user => {
+      const userDiv = document.createElement('div');
+      userDiv.className = 'user';
+      userDiv.innerHTML = `
+                    <p>用户名: ${user.user_name}</p>
+                    <p>联系方式: ${user.tel}</p>
+                    <p>邮箱: ${user.email}</p>
+                `;
+      userList.appendChild(userDiv);
+    });
+  }
+
+  // 初始化加载用户信息
+  fetchUsers();
+</script>
+</body>
+</html>

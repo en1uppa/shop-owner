@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<style>    body {
+    background-color: #F5DEB3;
+    font-family: 'Noto Serif SC', serif;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+.Box {
+
+    background-color: rgba(215, 189, 139, 0.99); /* 茶色背景 */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 350px;
+    overflow: hidden; /* 防止阴影超出盒子 */
+}
+h3 {
+    text-align: center;
+    color: #5D4037; /* 深茶色文字 */
+    margin-bottom: 15px;
+}
+.desc {
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+input[type="text"],
+input[type="password"] {
+    display: block;
+    width: 93%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+.loginBtn {
+    width: 60%;
+    padding: 10px;
+    background-color: #8B4513; /* 赭石色按钮 */
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.loginBtn:hover {
+    background-color: #A0522D; /* 更深的赭石色 */
+}
+.no {
+    text-align: center;
+    margin-top: 20px;
+}
+.no a {
+    color: #8B4513; /* 赭石色链接 */
+    text-decoration: none;
+}
+.no a:hover {
+    text-decoration: underline;
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/bubbly-bg@0.2.3/dist/bubbly-bg.js"></script>
+<body>
+    <div class="Box">
+        <form action="/user/login">
+        <h3>登录</h3>
+        <p class="desc">WELCOME LOGIN</p>
+        <input type="text" placeholder="请输入用户名" required>
+        <input type="password" placeholder="请输入密码" required>
+            &nbsp;&nbsp; &nbsp;&nbsp;
+        <input type="submit" class="loginBtn" value="立即登录"></button>
+        <p class="no"> <span></span>
+            <span> <a style="color: #ffffff;" href="用户注册.html">没有账号？立即注册</a> </span> </p>
+        </form>
+    </div>
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // 阻止表单默认提交
+
+            var user_name = document.querySelector('input[type="text"]').value;
+            var password = document.querySelector('input[type="password"]').value;
+
+            var user = {
+                user_name: user_name,
+                password: password
+            };
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/user/user/login', true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+            xhr.onload = function () {
+                console.log(typeof xhr.responseText)
+                if (xhr.responseText !== "0") {
+                    const user_id=xhr.responseText;
+
+                    localStorage.setItem('user_id',user_id);
+                    // window.location.href = "../pages/user/product/首页展示.html";
+                } else {
+
+                    alert('登录失败：' + xhr.responseText);
+                }
+            };
+
+            xhr.onerror = function () {
+                console.error('网络错误，请稍后再试');
+                alert('网络错误，请稍后再试');
+            };
+            xhr.send(JSON.stringify(user));
+        });
+    });
+</script>
+</body>
+</html>

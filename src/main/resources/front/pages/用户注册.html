@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Form</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>    body {
+    background-color: #F5DEB3;
+    font-family: 'Noto Serif SC', serif;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  #registerForm {
+    background-color: rgba(215, 189, 139, 0.99); /* 茶色背景 */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 350px;
+    overflow: hidden; /* 防止阴影超出盒子 */
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: #5D4037;
+  }
+  input[type="text"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="email"] {
+    width: 93%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  button[type="submit"] {
+    width: 60%;
+    padding: 10px;
+    background-color: #8B4513; /* 赭石色按钮 */
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  button[type="submit"]:hover {
+    background-color: #A0522D; /* 更深的赭石色 */
+  }
+  h3 {
+    text-align: center;
+    color: #5D4037; /* 深茶色文字 */
+    margin-bottom: 15px;
+  }
+  .desc {
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  </style>
+</head>
+<body>
+    <form id="registerForm">
+      <h3>注册</h3>
+      <p class="desc">WELCOME REGISTER</p>
+      <label for="username">用户名:</label>
+      <input type="text" id="username" name="username" required><br>
+
+      <label for="password">密码:</label>
+      <input type="password" id="password" name="password" required><br>
+
+      <label for="tel">联系方式</label>
+      <input type="tel" id="tel" name="tel" required><br>
+
+      <label for="email">电子邮箱:</label>
+      <input type="email" id="email" name="email" required><br>
+
+      &nbsp;&nbsp; &nbsp;&nbsp;
+      <button type="submit">提交</button>
+    </form>
+<script>
+  $(document).ready(function () {
+    $("#registerForm").on("submit", function (event) {
+      event.preventDefault();
+      const formData = {
+        user_name: $("#username").val(),
+        password: $("#password").val(),
+        tel: $("#tel").val(),
+        email: $("#email").val()
+      };
+
+      console.log(formData)
+      $.ajax({
+        // url: "/user/add",
+        url: "/user/user/register",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(formData),
+        success: function (response) {
+          console.log("Success:", response);
+        },
+        error: function (error) {
+          console.error("Error:", error);
+        }
+      });
+      alert("注册成功!")
+      window.location.href = "登录.html";
+    });
+
+  });
+</script>
+</body>
+</html>

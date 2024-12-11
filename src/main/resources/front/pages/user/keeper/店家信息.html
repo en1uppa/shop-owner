@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>店家信息展示与修改</title>
+  <style>
+    body {
+      background-color: #f5deb3; /* 浅米色背景 */
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    .profile-card {
+      background-color: #d7be8b;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 20px;
+      width: 40%;
+      margin: 50px auto;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    img.profile-pic {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<body onload="fetchKeeper()">
+<div>
+  <h1>店家信息展示</h1>
+  <div id="KeeperInfo" class="profile-card"></div>
+</div>
+<script>
+  function fetchKeeper(){
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        // console.log("打印测试"+xhr.responseText)
+        const keeper = JSON.parse(xhr.responseText);
+        // console.log("获取到的后端的产品id为: "+keeper.keeper_id)
+        displayKeeper(keeper);
+      } else if (xhr.readyState === 4) {
+        console.error('Fetch problem:', xhr.statusText);
+      }
+    };
+    xhr.open('GET', 'http://localhost:8080/keeper/keeper/get', true);
+    xhr.send();
+  }
+
+  function displayKeeper(keeper) {
+    // const div=document.createElement("div")
+    const keeperInfo = document.getElementById('KeeperInfo');
+    keeperInfo.innerHTML = `
+        <img src="https://i.hd-r.cn/72f123918d469f345a620df745270921.jpg" alt="店家头像" class="profile-pic">
+        <p><strong>店名:</strong>${keeper.keeper_name}</p>
+        <p><strong>电话:</strong> ${keeper.tel}</p>
+        <p><strong>电子邮箱:</strong> ${keeper.email}</p>
+      `;
+    // div.appendChild(keeperInfo)
+    keeperInfo.appendChild(keeperInfo)
+  }
+
+
+</script>
+</body>
+</html>

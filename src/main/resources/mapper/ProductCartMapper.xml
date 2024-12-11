@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="generator.mapper.ProductCartMapper">
+
+    <resultMap id="BaseResultMap" type="generator.domain.ProductCart">
+            <id property="productCartId" column="product_cart_id" jdbcType="INTEGER"/>
+            <result property="cartId" column="cart_id" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="productId" column="product_id" jdbcType="INTEGER"/>
+            <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+            <result property="totalPrice" column="total_price" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        product_cart_id,cart_id,user_id,
+        product_id,quantity,total_price
+    </sql>
+</mapper>

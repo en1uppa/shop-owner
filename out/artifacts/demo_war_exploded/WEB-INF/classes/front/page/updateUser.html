@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息更改</title>
+</head>
+<body>
+<h2>用户信息更改</h2>
+<form id="userUpdateForm">
+    <label for="username">用户名:</label>
+    <input type="text" id="username" name="username" ><br>
+
+    <label for="password">密码:</label>
+    <input type="password" id="password" name="password"><br>
+
+    <label for="age">年龄:</label>
+    <input type="number" id="age" name="age"><br>
+
+    <label for="gender">性别:</label>
+    <select id="gender" name="gender">
+        <option value="male">男</option>
+        <option value="female">女</option>
+    </select><br>
+    <button type="button" onclick="updateUser()">保存更改</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function updateUser() {
+        const userId = localStorage.getItem("USERID");
+
+        // console.log("用户ID为"+userId)        // 获取表单中的数据
+        const userData = {
+            userId: userId,
+            username: $('#username').val(),
+            password: $('#password').val(),
+            age: $('#age').val(),
+            gender: $('#gender').val(),
+        };
+
+        // 发送AJAX请求更新用户信息
+        $.ajax({
+            url: '/user/update',
+            type: "POST",
+            data: JSON.stringify(userData),
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                if (response.status === "success") {
+                    alert("用户信息更新成功！");
+                    console.log("成功:"+response.message)
+                }else { ///////////////////bug,执行的是下面的代码////////////////
+                    alert("更新用户信息失败，请重试！");
+                    console.log("失败:"+response.message)
+                }
+            },
+            error: function (err) {
+                alert("更新过程中发生错误，请检查网络或联系管理员！");
+            }
+        });
+    }
+</script>
+</body>
+</html>

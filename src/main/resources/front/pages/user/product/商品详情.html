@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情</title>
+    <style>
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: #F5DEB3; /* 茶色背景 */
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        /* 商品信息标题 */
+        h2 {
+            font-size: 20px;
+            color: #5D4037; /* 深茶色文字 */
+            margin-bottom: 10px;
+        }
+
+        /* 商品信息文本 */
+        p {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        /* 商品图片样式 */
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #addCart {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: #fff;
+            background-color: #d7be8b; /* 蓝色背景 */
+            border: none;
+            border-radius: 4px; /* 圆角 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.12); /* 阴影 */
+            transition: background-color 0.3s ease; /* 平滑过渡效果 */
+        }
+    </style>
+</head>
+<body>
+<div id="productDetailContainer" class="product-detail-container">
+</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<button onclick="judgeStatus()" id="addCart">加入购物车</button>
+<script>
+    // 获取查询字符串,接收首页传过来的product_id的值
+    var urlParams = new URLSearchParams(window.location.search);
+    var productId1 = urlParams.get('product_id');
+    const userId1=localStorage.getItem('user_id')
+
+
+    function addCart(){
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', `http://localhost:8080/user/cart/addCart/${userId1}/${productId1}`, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send();
+        window.location.reload()
+        alert("已加入购物车")
+        // window.location.reload()
+    }
+
+    // 判断是否打烊
+    function judgeStatus(){
+        // 先获取状态
+        getKeeperStatus1()
+        console.log("店铺状态值：：："+localStorage.getItem('keeperStatus'))
+        if (localStorage.getItem('keeperStatus')==="1"){
+            addCart()
+        }else {
+            alert("已打烊，无法购买")
+            window.location.reload()
+        }
+    }
+
+    async function fetchProductDetail() {
+        try {
+            // 发送请求获取商品详情
+            const response = await fetch(`http://localhost:8080/user/product/getById/${productId1}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const product = await response.json();
+
+            // 显示商品详情到页面静态区域
+            displayProductDetail(product);
+        } catch (error) {
+            console.error('Fetch problem:', error);
+            document.getElementById('productDetailContainer').innerText = '获取商品详情时发生错误，请稍后重试。';
+        }
+    }
+
+    async function getKeeperStatus1(){
+        try {
+            // 发送请求获取商品详情
+            const response = await fetch(`http://localhost:8080/keeper/keeper/getStatus`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const keeperStatus = await response.json();
+            localStorage.setItem('keeperStatus', keeperStatus)
+            var button = document.querySelector('button[onclick="setKeeperStatus()"]');
+            button.textContent = keeperStatus === 1 ? "营业中" : "已打烊";
+
+        } catch (error) {
+            console.error('Fetch problem:', error);
+            document.getElementById('productDetailContainer').innerText = '获取商品详情时发生错误，请稍后重试。';
+        }
+    }
+
+    function displayProductDetail(product) {
+        const container = document.getElementById('productDetailContainer');
+        container.innerHTML = `
+               <h2><p style="font-size: 18px; margin-bottom: 5px; text-align: center">商品名称: ${product.product_name}</p></h2>
+              <p style="font-size: 14px; color: #999; margin-bottom: 10px;text-align: center">商品库存数量: ${product.product_num}</p>
+              <p style="font-size: 14px; line-height: 1.5;text-align: center">商品描述: ${product.description}</p>
+              <p style="font-size: 16px; color: #f00; margin-bottom: 5px;text-align: center"><b style="font-size: 25px;">￥${product.product_price}</b></p>
+                <img src="${product.image_url}" alt="${product.product_name}" class="product-image">
+            `;
+    }
+    document.addEventListener('DOMContentLoaded', fetchProductDetail);
+</script>
+</body>
+</html>

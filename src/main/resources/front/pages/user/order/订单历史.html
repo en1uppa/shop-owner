@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        background-color: #f5deb3;
+        color: #333;
+    }
+    .orderList {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+    .order {
+        padding: 10px;
+        border: 1px solid #8B4513; /* 深茶色边框 */
+        border-radius: 4px;
+        background-color: #fffbe6; /* 浅米色背景 */
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        overflow: hidden;
+    }
+    .order p {
+        margin: 0;
+        color: #333;
+    }
+    button {
+        background-color: #d7be8b; /* 深茶色按钮 */
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    button:hover {
+        background-color: #d2ad57; /* 更深的茶色在鼠标悬停时 */
+    }
+    </style>
+</head>
+<body>
+    <h1>历史订单</h1>
+<div class="orderList" id="orderList">
+</div>
+<script>
+    const userId = localStorage.getItem('user_id')
+    console.log("user_id"+userId);
+    function fetchOrder() {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log("打印测试xhr.responseText的值"+xhr.responseText)
+                const orders = JSON.parse(xhr.responseText);
+                displayOrder(orders);
+            } else if (xhr.readyState === 4) {
+                console.error('Fetch problem:', xhr.statusText);
+            }
+        };
+        xhr.open('GET', 'http://localhost:8080/user/order/getOrderHistory/'+userId, true);
+        xhr.send();
+    }
+
+    // 显示订单列表
+    function displayOrder(orders) {
+        const orderList = document.getElementById('orderList');//获取模块元素
+        console.log(orders)
+        orderList.innerHTML = ''; //初始化
+        orders.forEach(order => {
+            const order_id=order.order_id;
+            console.log("展示ID"+order_id)
+            const orderDiv = document.createElement('div');//创建div
+            orderDiv.className = 'order';//设置类名
+                orderDiv.innerHTML = `
+            <div onclick="sendOrderId(${order_id})">
+              <p>订单创建时间: ${order.createTime}</p>
+              <p>订单完成时间: ${order.endTime}</p>
+              <p>订单地点: ${order.destination}</p>
+            </div>
+            <button onclick="deleteByOrderId(${order_id})">删除</button>
+            `;
+            orderList.appendChild(orderDiv);
+        });
+    }
+    function deleteByOrderId(order_id){
+        var xhr = new XMLHttpRequest();
+        xhr.open('DELETE', `http://localhost:8080/user/order/deleteOrderByUser/`+order_id, true);
+
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send();
+        window.location.reload()
+    }
+
+    function sendOrderId(order_id){
+        console.log("获取到的'前端'的订单id为: "+order_id)
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', `http://localhost:8080/user/order/getOrderDetails/`+order_id, true);
+
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send();
+        window.location.href = `http://localhost:8080/front/pages/user/order/订单详情.html?order_id=`+order_id;
+    }
+    fetchOrder()
+</script>
+
+</body>
+</html>
+

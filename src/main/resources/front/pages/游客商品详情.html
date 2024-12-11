@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情</title>
+    <style>
+        .product-detail-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        img.product-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div id="productDetailContainer" class="product-detail-container"></div>
+<script>
+    // 获取查询字符串,接收首页传过来的product_id的值
+    var urlParams = new URLSearchParams(window.location.search);
+    var productId1 = urlParams.get('product_id');
+    const userId1=localStorage.getItem('user_id')
+
+    async function fetchProductDetail() {
+        try {
+            // 发送请求获取商品详情
+            const response = await fetch(`http://localhost:8080/user/product/getById/${productId1}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const product = await response.json();
+
+            // 显示商品详情到页面静态区域
+            displayProductDetail(product);
+        } catch (error) {
+            console.error('Fetch problem:', error);
+            document.getElementById('productDetailContainer').innerText = '获取商品详情时发生错误，请稍后重试。';
+        }
+    }
+
+    function displayProductDetail(product) {
+        const container = document.getElementById('productDetailContainer');
+        container.innerHTML = `
+                <h2>商品名称: ${product.product_name}</h2>
+                <p>商品价格: ${product.product_price}</p>
+                <p>商品库存数量: ${product.product_num}</p>
+                <p>商品描述: ${product.description}</p>
+                <img src="${product.image_url}" alt="${product.product_name}" class="product-image">
+            `;
+    }
+    document.addEventListener('DOMContentLoaded', fetchProductDetail);
+</script>
+</body>
+</html>

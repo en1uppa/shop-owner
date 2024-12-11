@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>我的</title>
+  <style>
+    body{
+      background-color: #f5deb3; /* 浅米色背景 */
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .module {
+      background-color: #d7be8b;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      padding: 15px;
+      text-align: center;
+      width: 80%;
+      cursor: pointer;
+    }
+    .module:hover {
+      background-color: #e5bf69;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>我的</h1>
+  <div class="module" onclick="viewPersonalInfo()">
+    个人信息
+  </div>
+  <div class="module" onclick="viewMyOrders()">
+    我的订单
+  </div>
+  <div class="module" onclick="viewMyCart()">
+    我的购物车
+  </div>
+</div>
+
+<script>
+  // 示例函数，用于模拟点击后的跳转逻辑
+  function viewPersonalInfo() {
+    window.location.href = "查询&修改个人信息.html";
+  }
+
+  function viewMyOrders() {
+    window.location.href = "../order/订单历史.html";
+  }
+
+  function viewMyCart() {
+    window.location.href = "../cart/查询购物车.html";
+  }
+</script>
+
+</body>
+</html>

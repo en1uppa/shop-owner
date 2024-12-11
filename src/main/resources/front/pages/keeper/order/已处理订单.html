@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>总订单列表展示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5deb3;
+            color: #333;
+        }
+        table {
+            width: 90%;
+            margin: 50px auto;
+            border-collapse: collapse;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #d7be8b; /* 赭石色背景 */
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        /*tr:nth-child(even) {*/
+        /*    background-color: #F5DEB3; !* 浅茶色 *!*/
+        /*}*/
+        .order-status {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h1>已处理订单展示</h1>
+<table>
+    <thead>
+    <tr>
+        <th>用户名</th>
+        <th>创建时间</th>
+        <th>结束时间</th>
+        <th>目的地</th>
+        <th>订单状态</th>
+    </tr>
+    </thead>
+    <tbody id="ordersList">
+    <!-- 动态内容将通过JavaScript填充此处 -->
+    </tbody>
+</table>
+
+<script>
+    async function fetchOrdersList() {
+        try {
+            const response = await fetch('http://localhost:8080/keeper/order/getFinishOrderList'); // 假定的后端API URL
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const ordersData = await response.json();
+            populateOrdersTable(ordersData);
+        } catch (error) {
+            console.error('Fetch problem:', error);
+            document.getElementById('ordersList').innerHTML = "<tr><td colspan='5'>获取订单列表失败，请重试。</td></tr>";
+        }
+    }
+
+    function populateOrdersTable(orders) {
+        const ordersList = document.getElementById('ordersList');
+        ordersList.innerHTML = ''; // 清空现有内容以便重新填充
+
+        orders.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+          <td>${order.user_name}</td>
+          <td>${order.createTime}</td>
+          <td>${order.endTime}</td>
+          <td>${order.destination}</td>
+          <td class="order-status">${order.status}</td>
+        `;
+            ordersList.appendChild(row);
+        });
+    }
+
+    // 初始化页面时获取总订单列表
+    fetchOrdersList();
+</script>
+</body>
+</html>

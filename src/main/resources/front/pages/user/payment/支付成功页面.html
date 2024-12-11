@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>支付成功页面</title>
+  <style>
+    body {
+      background-color: #f5deb3;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .payment-success {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .amount {
+      font-size: 24px;
+      font-weight: bold;
+      color: #007BFF;
+    }
+    .checkmark {
+      font-size: 48px;
+      color: #28a745; /* 绿色，代表成功 */
+      margin-bottom: 20px;
+    }
+    .buttons-container {
+      display: flex;
+      gap: 10px;
+    }
+    .button {
+      appearance: none;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .button-home {
+      background-color: #d7be8b;
+      color: white;
+    }
+    .button-home:hover {
+      background-color: #dcb15e;
+    }
+    .button-order {
+      background-color: #d7be8b;
+      color: white;
+    }
+    .button-order:hover {
+      background-color: #dcb15e;
+    }
+  </style>
+</head>
+<body>
+<div class="payment-success">
+  <img src="订单支付成功.png">
+  <p>支付成功！正在等待商家接单...</p>
+</div>
+<div class="buttons-container">
+  <button class="button button-order" onclick="viewOrder()">查看订单</button>
+  <button class="button button-home" onclick="navigateToHome()">返回首页</button>
+
+</div>
+
+<script>
+  const cartId1=localStorage.getItem('cart_id')
+  //页面加载的时候调用deleteCart()方法
+
+  // DELETE http://localhost:8080/user/cart/deleteProductCart/{{cart_id}}
+  function deleteProductCart(){
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `http://localhost:8080/user/cart/deleteProductCart/`+cartId1, true);
+
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText);
+      }
+    };
+    xhr.send();
+  }
+
+  function deleteCart(){
+    var xhr = new XMLHttpRequest();
+    xhr.open('DELETE', `http://localhost:8080/user/cart/delete/`+cartId1, true);
+
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText);
+      }
+    };
+    xhr.send();
+  }
+  function navigateToHome() {
+  window.location.href = "../product/首页展示.html"; // 跳转到首页的URL，根据实际路由调整
+    deleteProductCart();
+    deleteCart();
+}
+  function viewOrder() {
+    window.location.href = `../order/支付后的订单查看.html`;
+}
+</script>
+</body>
+</html>

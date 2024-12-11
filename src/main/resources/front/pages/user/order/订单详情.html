@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息展示与修改</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .profile-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            width: 40%;
+            margin: 50px auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        img.profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>订单详情</h1>
+<div id="orderDetailsInfo" class="orderDetails-card"></div>
+<script>
+    var urlParams = new URLSearchParams(window.location.search);
+    var orderDetailsId = urlParams.get('order_id');
+
+    async function fetchorderDetailsProfile() {
+        try {
+            const response = await fetch(`http://localhost:8080/user/order/getOrderDetails/`+orderDetailsId);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const orderDetailsProfile = await response.json();
+            displayorderDetailsProfile(orderDetailsProfile);
+        } catch (error) {
+            console.error('Fetch problem:', error);
+            document.getElementById('orderDetailsInfo').innerText = "获取订单详情信息失败，请重试。";
+        }
+    }
+    function displayorderDetailsProfile(orderDetails) {
+        const orderDetailsInfo = document.getElementById('orderDetailsInfo');
+        orderDetailsInfo.innerHTML = `
+          <p>订单ID: ${orderDetails.order_id}</p>
+          <p>订单创建时间: ${orderDetails.createTime}</p>
+          <p>订单完成时间: ${orderDetails.endTime}</p>
+          <p>订单地点: ${orderDetails.destination}</p>
+          <p>订单状态: ${orderDetails.status}</p>
+      `;
+    }
+    // 初始化页面时获取订单详情信息
+    fetchorderDetailsProfile();
+</script>
+</body>
+</html>

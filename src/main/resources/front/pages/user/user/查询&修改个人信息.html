@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人信息展示与修改</title>
+  <style>    body {
+    background-color: #f5deb3;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: #333;
+  }
+  .profile-card {
+    background-color:  #d7be8b; /* 浅米色背景 */
+    border: 1px solid #8B4513; /* 深茶色边框 */
+    border-radius: 5px;
+    padding: 20px;
+    width: 40%;
+    margin: 50px auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  img.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 3px solid #D2691E; /* 棕橙色边框 */
+  }
+  input[type="text"], input[type="password"], input[type="tel"], input[type="email"] {
+    background-color: #fffbe6; /* 输入框背景与卡片背景一致 */
+    border: 1px solid #8B4513; /* 边框颜色与卡片边框一致 */
+    color: #333;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  button {
+    background-color: #8B4513; /* 深茶色按钮背景 */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  button:hover {
+    background-color: #A0522D; /* 鼠标悬停时的按钮颜色更深 */
+  }
+  </style>
+</head>
+<body>
+<h1>个人信息</h1>
+<div id="UserInfo" class="user-card"></div>
+
+<h2>修改个人信息</h2>
+<form id="updateForm">
+  <input type="text" id="userNameInput" placeholder="姓名">
+  <input type="password" id="passwordInput" placeholder="新密码">
+  <input type="tel" id="telInput" placeholder="电话">
+  <input type="email" id="emailInput" placeholder="电子邮箱">
+  <button type="submit">确认修改</button>
+</form>
+
+<script>
+  const userId = localStorage.getItem('user_id')
+  console.log("获取到的userId为: "+userId)
+
+  async function fetchUserProfile() {
+    try {
+      const response = await fetch(`http://localhost:8080/user/user/getById/`+userId);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const userProfile = await response.json();
+      displayUserProfile(userProfile);
+    } catch (error) {
+      console.error('Fetch problem:', error);
+      document.getElementById('UserInfo').innerText = "获取用户信息失败，请重试。";
+    }
+  }
+
+  function displayUserProfile(user) {
+    const UserInfo = document.getElementById('UserInfo');
+    UserInfo.innerHTML = `
+        <img src="${user.img_url}" alt="用户头像" class="user-pic">
+        <p><strong>姓名:</strong>${user.user_name}</p>
+        <p><strong>密码:</strong>${user.password}</p>
+        <p><strong>电话:</strong> ${user.tel}</p>
+        <p><strong>电子邮箱:</strong> ${user.email}</p>
+      `;
+
+    // 预填充表单以供修改
+    document.getElementById('userNameInput').value = user.user_name;
+    document.getElementById('telInput').value = user.tel;
+    document.getElementById('emailInput').value = user.email;
+  }
+
+  async function updateUserProfile(updatedData) {
+    try {
+      const response = await fetch(`http://localhost:8080/user/user/update/`+userId, {
+        method: 'PUT', // 或者其他适合的方法，根据后端API设计
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      alert("个人信息已成功更新！");
+      window.location.reload()
+      // 可以考虑刷新页面或重新获取用户信息
+    } catch (error) {
+      console.error('Update problem:', error);
+      alert("更新个人信息失败，请重试。");
+    }
+  }
+
+  // 绑定表单提交事件
+  document.getElementById('updateForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // 阻止表单默认提交行为
+    const userId = 1; // 假设用户ID
+    const updatedData = {
+      user_name: document.getElementById('userNameInput').value,
+      password: document.getElementById('passwordInput').value,
+      tel: document.getElementById('telInput').value,
+      email: document.getElementById('emailInput').value,
+    };
+    updateUserProfile(updatedData);
+  });
+
+  // 初始化页面时获取用户信息
+  fetchUserProfile();
+</script>
+</body>
+</html>

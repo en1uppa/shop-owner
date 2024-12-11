@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息展示与修改</title>
+    <style>        body {
+        background-color: #F5DEB3; /* 更改为柔和的米黄色背景 */
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    h1 {
+        color: #6D4C41; /* 标题采用深茶色 */
+    }
+    .cartVo-card {
+        background-color: #f5deb3; /* 轻茶色背景 */
+        border: 1px solid #D6B694; /* 棕褐色边框 */
+        border-radius: 5px;
+        padding: 20px;
+        width: 60%;
+        margin: 50px auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 提升阴影效果 */
+    }
+    .product-item {
+        border: 1px solid #e5bf69;
+        background-color: #d7be8b;
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    img.product-image {
+        height: 80px;
+        width: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    button {
+        background-color: #d5c2a3; /* 深茶色背景 */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+    button:hover {
+        background-color: #8B6550; /* 鼠标悬停时更暗的茶色 */
+    }
+    </style>
+</head>
+<body>
+<h1>购物车详情</h1>
+<div id="cartVoInfo" class="cartVo-card"></div>
+<button onclick="deleteCart()">清空购物车</button>
+<button onclick="payment()">支付</button>
+<script>
+    const userId=localStorage.getItem('user_id')
+    const cartId=localStorage.getItem('cart_id')
+    // console.log("打印测试cartId"+cartId)
+    async function fetchcartVoProfile() {
+        try {
+            const response = await fetch(`http://localhost:8080/user/cart/getByUserId/`+userId);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            // const cartVoProfile = await response.json();
+            const cartVoProfile = await response.json();
+            // console.log("后端接收：cartVo对象："+cartVoProfile)
+            displayCartVoProfile(cartVoProfile);
+        } catch (error) {
+            console.error('Fetch problem:', error);
+            document.getElementById('cartVoInfo').innerText = "获取购物车详情信息失败，请重试。";
+        }
+    }
+
+    function displayCartVoProfile(cartVo) {
+        if (cartVo.total_price==null){
+            window.location.href="空购物车.html"
+        }
+        localStorage.setItem("cart_id", cartVo.cart_id)
+        // console.log("打印测试cartVo.cart_id"+cartVo.cart_id)
+        let htmlContent = `<p style="font-size: 16px;  margin-bottom: 5px;">全部商品总额: <b style="font-size: 25px; color: #f00;">￥${cartVo.total_price}</b></p>`; // 展示总额
+        // 遍历 productVoList 数组来构建商品信息
+        if (cartVo.productVoList && Array.isArray(cartVo.productVoList)) {
+            cartVo.productVoList.forEach((productVo, index) => {
+                // const product_id1=productVo.product_id
+                // console.log("打印测试product_id1:"+product_id1)
+                // console.log("打印测试productVo"+productVo)
+                // 假设每个 productVo 包含 name, imageUrl, type, price 等属性
+                htmlContent += `
+              <div class="product-item">
+                <p><img src="${productVo.image_url}" alt="Product Image" style="height: 80px;width: 80px"/></p>
+                <p>商品名: ${productVo.product_name}</p>
+                <p style="font-size: 16px; color: #f00; margin-bottom: 5px;"><b style="font-size: 25px;">产品价格: ￥${productVo.product_price}</b></p>
+                <p>已购买数量: ${productVo.buy_num}</p>
+                <button onclick="addOne(${productVo.product_id})">+1</button>
+                <button onclick="minusOne(${productVo.product_id})">-1</button>
+              </div>
+            `;
+            });
+        }
+        // 设置到 cartVoInfo 元素的 innerHTML
+        cartVoInfo.innerHTML = htmlContent;
+    }
+
+
+    function addOne(product_id){
+        console.log("addOne参数:product_id："+product_id+"cart_id"+cartId)
+        var xhr = new XMLHttpRequest();http://localhost:8080/user/cart/addProduct/{{cart_id}}/{{product_id}}
+        xhr.open('PUT', `http://localhost:8080/user/cart/addProduct/`+cartId+`/`+product_id, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send();
+        window.location.reload()
+    }
+
+    function minusOne(product_id){
+        console.log("minusOne参数:product_id: "+product_id+"cart_id"+cartId)
+        var xhr = new XMLHttpRequest();
+        xhr.open('DELETE', `http://localhost:8080/user/cart/minusProduct/`+cartId+`/`+product_id, true);
+
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send();
+        window.location.reload()
+    }
+
+
+    function deleteCart(){
+        var xhr = new XMLHttpRequest();
+        xhr.open('DELETE', `http://localhost:8080/user/cart/delete/`+cartId, true);
+
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send();
+        window.location.reload()
+    }
+
+    function payment(user_id){
+        console.log("payment参数user_id: "+user_id)
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', `http://localhost:8080/user/payment/paySuccess/`+userId, true);
+
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send();
+
+        window.location.href = `../payment/支付成功页面.html`;
+        // 支付完成后即可删除购物车
+
+    }
+
+
+    // 初始化页面时获取购物车详情信息
+    fetchcartVoProfile();
+</script>
+</body>
+</html>

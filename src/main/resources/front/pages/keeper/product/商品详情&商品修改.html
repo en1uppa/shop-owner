@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情</title>
+    <style>
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background-color: #F5DEB3; /* 茶色背景 */
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        /* 商品信息标题 */
+        h2 {
+            font-size: 20px;
+            color: #5D4037; /* 深茶色文字 */
+            margin-bottom: 10px;
+        }
+
+        /* 商品信息文本 */
+        p {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .product-detail-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+<div id="productDetailContainer" class="product-detail-container" style="background:#d7be8b;"></div>
+<h2>修改商品信息</h2>
+<form id="updateForm" >
+    <input type="text" id="productNameInput" placeholder="产品名称">
+    <input type="number" id="productPriceInput" placeholder="价格">
+    <input type="number" id="productNumInput" placeholder="数量">
+    <input type="text" id="descriptionInput" placeholder="描述">
+    <input type="text" id="imageUrlInput" placeholder="图片">
+    <input type="text" id="productTypeInput" placeholder="产品类型">
+    <button type="submit">确认修改</button>
+</form>
+
+<script>
+    // 获取查询字符串,接收首页传过来的product_id的值
+    var urlParams = new URLSearchParams(window.location.search);
+    var productId = urlParams.get('product_id');
+
+    async function fetchProductDetail() {
+        try {
+            // 发送请求获取商品详情
+            const response = await fetch(`http://localhost:8080/keeper/product/getById/${productId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const product = await response.json();
+
+            // 显示商品详情到页面静态区域
+            displayProductDetail(product);
+        } catch (error) {
+            console.error('Fetch problem:', error);
+            document.getElementById('productDetailContainer').innerText = '获取商品详情时发生错误，请稍后重试。';
+        }
+    }
+    function displayProductDetail(product) {
+        const container = document.getElementById('productDetailContainer');
+        container.innerHTML = `
+               <h2><p style="font-size: 18px; margin-bottom: 5px; text-align: center">商品名称: ${product.product_name}</p></h2>
+              <p style="font-size: 14px; color: #999; margin-bottom: 10px;text-align: center">商品库存数量: ${product.product_num}</p>
+              <p style="font-size: 14px; line-height: 1.5;text-align: center">商品描述: ${product.description}</p>
+              <p style="font-size: 16px; color: #f00; margin-bottom: 5px;text-align: center"><b style="font-size: 25px;">￥${product.product_price}</b></p>
+                <img src="${product.image_url}" alt="${product.product_name}" class="product-image">
+            `;
+    }
+    document.addEventListener('DOMContentLoaded', fetchProductDetail);
+
+    async function updateProductProfile(updatedData) {
+        try {
+            const response = await fetch(`http://localhost:8080/keeper/product/update`, {
+                method: 'PUT', // 或者其他适合的方法，根据后端API设计
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedData),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            alert("商品信息已成功更新！");
+            // 可以考虑刷新页面或重新获取用户信息
+        } catch (error) {
+            console.error('Update problem:', error);
+            alert("更新商品信息失败，请重试。");
+        }
+    }
+
+    // 绑定表单提交事件
+    document.getElementById('updateForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+        const updatedData = {
+            product_id: productId,
+            product_name: document.getElementById('productNameInput').value,
+            product_price: document.getElementById('productPriceInput').value,
+            product_num: document.getElementById('productNumInput').value,
+            description: document.getElementById('descriptionInput').value,
+            image_url: document.getElementById('imageUrlInput').value,
+            product_type: document.getElementById('productTypeInput').value
+
+        };
+        updateProductProfile(updatedData);
+    });
+
+    // 初始化页面时获取用户信息
+    fetchProductDetail();
+</script>
+</body>
+</html>

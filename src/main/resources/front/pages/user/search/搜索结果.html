@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<style>        body {
+    font-family: Arial, sans-serif;
+    background-color: #F5DEB3;
+}
+
+#searchResults {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.product-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.product-card h3 {
+    margin: 20px 20px 10px;
+    color: #333;
+}
+
+.product-card p {
+    margin: 0 20px 10px;
+    color: #666;
+}
+
+.product-price {
+    font-weight: bold;
+    color: #C00;
+}
+</style>
+<body>
+<div id="searchResults">
+</div>
+
+</body>
+<script>
+    var urlParams = new URLSearchParams(window.location.search);
+    var searchTerm1 = urlParams.get('searchTerm');
+        async function searchProducts() {
+            console.log("搜索关键词2："+searchTerm1)
+            const response = await fetch(`http://localhost:8080/user/search/getByProductName?searchTerm=${searchTerm1}`);
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+            const products = await response.json();
+            displayProducts(products);
+        }
+    function displayProducts(products) {
+        const resultsContainer = document.getElementById('searchResults');
+        resultsContainer.innerHTML = ''; // 先清空之前的搜索结果
+
+        if (products.length === 0) {
+            resultsContainer.innerHTML = '<p>没有找到与搜索条件匹配的产品。</p>';
+            return;
+        }
+
+        products.forEach(product => {
+            const productCard = `
+      <div class="product-card">
+        <img src="${product.image_url}">
+        <h3>${product.product_name}</h3>
+        <p>库存: ${product.product_num}</p>
+        <p>价格: ${product.product_price}元</p>
+        <p>类型: ${product.product_type}</p>
+        <p>产品描述:${product.description}</p>
+      </div>
+    `;
+            resultsContainer.innerHTML += productCard;
+        });
+    }
+    searchProducts();
+</script>
+
+</html>

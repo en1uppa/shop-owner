@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #userList { margin-top: 20px; }
+        .userItem {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .userLabel {
+            display: inline-block;
+            width: 150px;
+            text-align: left;
+            margin-right: 10px;
+            font-weight: bold;
+            background-color: transparent;
+        }
+        .actionButtons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 5px;
+        }
+        .actionButton {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .deleteButton {
+            background-color: #f44336; /* Red */
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h2>用户列表</h2>
+<button id="loadAllUsers">获取用户</button>
+
+<div id="userList"></div>
+
+<script>
+    $(document).ready(function () {
+        $("#loadAllUsers").on("click", function () {
+            $.ajax({
+                url: "/user/list",
+                type: "GET",
+            }).done(function (response) {
+
+                if (Array.isArray(response.data)) {
+                    let userListHtml = "";
+                    response.data.forEach(user => {
+                        userListHtml += `
+                                <div class="userItem">
+                                    <div>id: <span class="userLabel">${user.user_id}</span></div>
+                                    <div>用户名: <span class="userLabel">${user.username}</span></div>
+                                    <div>密码: <span class="userLabel">${user.password}</span></div>
+                                    <div>年龄: <span class="userLabel">${user.age}</span></div>
+                                    <div>性别: <span class="userLabel">${user.gender}</span></div>
+                                    <div class="actionButtons">
+                                        <button class="actionButton" data-user1-id="${user.user_id}" onclick="editUser() ">修改</button>
+                                        <button class="actionButton deleteButton" data-user-id="${user.user_id}">删除</button>
+                                    </div>
+                                </div>
+
+                            `;
+                    });
+                    $("#userList").html(userListHtml);
+
+
+                    // 函数调用
+                    $(".actionButton").on("click", function() {
+                        const userId = $(this).data("user1-id");
+                        localStorage.setItem("USERID", userId)
+                        editUser();
+                    })
+                    // 删除按钮点击事件
+                    $(".deleteButton").on("click", function() {
+                        const userId = $(this).data("user-id");
+                        // 测试
+                        // console.log("用户ID为"+userId)
+                        deleteUser(userId);
+                    })
+                } else {
+                    alert("数据格式错误，无法解析用户信息！");
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("请求失败:", textStatus, errorThrown);
+                alert("加载用户列表失败，请检查网络连接！");
+            });
+        });
+
+        function editUser() {
+            window.location.href = "/front/page/updateUser.html";
+        }
+
+        function deleteUser(userId) {
+            if (confirm("确定要删除该用户吗？")) {
+                $.ajax({
+                    url: `/user/delete/${userId}`, // 假设这是删除用户的API路径
+                    type: "DELETE",
+                }).done(function () {
+                    alert("用户已成功删除！");
+                    $("#loadAllUsers").click(); // 刷新用户列表
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    alert("删除用户失败，请重试！");
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

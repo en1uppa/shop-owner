@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+    font-family: 'Noto Serif SC', serif;
+    background-color: #F5DEB3; /* 茶色背景 */
+    color: #333;
+  }
+    #searchForm {
+      margin-left: 400px;
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+      border-radius: 25px;
+      overflow: hidden; /* 隐藏溢出，以便创建无缝的边框效果 */
+    }
+
+    #searchInput {
+      flex-grow: 1;
+      padding: 15px 20px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background-color: #fff;
+      border-radius: 25px;
+    }
+
+    #searchInput::placeholder {
+      color: #999;
+    }
+
+    button {
+      padding: 14px 20px;
+      border: none;
+      background-color: #664A2E; /* 茶色按钮 */
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 0 25px 25px 0; /* 右侧圆角 */
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #523B25; /* 鼠标悬停时更深的茶色 */
+    }
+
+
+  h1 {
+    text-align: center;
+    color: #5D4037; /* 深茶色标题 */
+    margin-bottom: 20px;
+  }
+  /* 调整超链接样式 */
+  a {
+    float:right;
+    color: #8B4513; /* 赭石色作为链接的基本颜色 */
+    text-decoration: none;
+    transition: color 0.3s ease; /* 平滑过渡效果 */
+    margin-right: 10px;
+  }
+  a:hover {
+    color: #A0522D; /* 悬停时颜色略深，以增加交互感 */
+    text-decoration: underline;
+  }
+  .product img {
+    margin-left: 20px;
+    float:left;
+    width: 150px; /* 你可以根据需要调整这个值 */
+    height: 150px; /* 如果设置了固定高度，需要确保与width配合使用，否则可能导致图片变形 */
+    object-fit: cover; /* 确保图片覆盖整个容器，可能会有部分图片内容不可见 */
+    border-radius: 4px; /* 添加边框圆角 */
+    display: block; /* 确保img元素作为块级元素显示 */
+    margin-right: 20px; /* 为图片与详情之间的间隔添加外边距 */
+  }
+
+  .product {
+    margin-left: 30px;
+    /*圆角*/
+    border-radius: 15px;
+    width: 1450px;
+    background-color: #d7be8b;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  #open_close {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #d7be8b; /* 蓝色背景 */
+    border: none;
+    border-radius: 4px; /* 圆角 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.12); /* 阴影 */
+    transition: background-color 0.3s ease; /* 平滑过渡效果 */
+  }
+  </style>
+</head>
+<body>
+<h1>小仲购物</h1>
+<a href="../user/我的.html">我的</a>
+<a href="../keeper/店家信息.html">店家</a>
+&nbsp;&nbsp;
+<span style="color: #694c41;">店铺状态</span>
+<button id="open_close" onclick="setKeeperStatus()" ></button>
+</div>
+<!-- 在头部导航之后添加搜索框 -->
+<div>
+  <form id="searchForm" onsubmit="event.preventDefault(); searchProducts();">
+    <input type="text" id="searchInput" placeholder="请输入商品名称搜索...">
+    <button type="submit">搜索</button>
+  </form>
+</div>
+
+
+<br /><br />
+<div class="productList" id="productList">
+
+</div>
+<script>
+  async function searchProducts() {
+    const searchTerm = document.getElementById('searchInput').value.trim();
+    console.log("搜索关键词1："+searchTerm)
+    window.location.href = `../search/搜索结果.html?searchTerm=`+searchTerm;
+  }
+  async function setKeeperStatus(){
+  }
+
+  function fetchProducts() {
+    getKeeperStatus()
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        // console.log("打印测试"+xhr.responseText)
+        const products = JSON.parse(xhr.responseText);
+        displayProducts(products);
+      } else if (xhr.readyState === 4) {
+        console.error('Fetch problem:', xhr.statusText);
+      }
+    };
+
+    xhr.open('GET', 'http://localhost:8080/user/product/list', true);
+    xhr.send();
+  }
+
+  async function getKeeperStatus(){
+    try {
+      // 发送请求获取商品详情
+      const response = await fetch(`http://localhost:8080/keeper/keeper/getStatus`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const keeperStatus = await response.json();
+      localStorage.setItem('keeperStatus', keeperStatus)
+      console.log("店铺状态："+keeperStatus)
+      var button = document.querySelector('button[onclick="setKeeperStatus()"]');
+      button.textContent = keeperStatus === 1 ? "店铺营业中" : "店铺已打烊";
+
+    } catch (error) {
+      console.error('Fetch problem:', error);
+      document.getElementById('productDetailContainer').innerText = '获取商品详情时发生错误，请稍后重试。';
+    }
+  }
+
+  // 显示产品列表
+  function displayProducts(products) {
+    const productList = document.getElementById('productList');//获取模块元素
+    productList.innerHTML = ''; //初始化
+
+    products.forEach(product => {
+      const product_id=product.product_id;
+      // console.log("获取到的后端的产品id为: "+product_id)
+      const productDiv = document.createElement('div');//创建div
+      productDiv.className = 'product';//设置类名
+
+      productDiv.innerHTML = `<div onclick="sendProductId(${product_id})">
+  <br />
+    <img src="${product.image_url}" alt="${product.product_name}"">
+    <div style="flex: 1;float:left;">
+      <p style="font-size: 18px; margin-bottom: 5px;">商品名称: ${product.product_name}</p>
+      <p style="font-size: 14px; color: #999; margin-bottom: 10px;">商品库存数量: ${product.product_num}</p>
+      <p style="font-size: 14px; line-height: 1.5;">商品描述: ${product.description}</p>
+      <p style="font-size: 16px; color: #f00; margin-bottom: 5px;"><b style="font-size: 25px;">￥${product.product_price}</b></p>
+  <br />
+  </div>
+</div>`;
+      productList.appendChild(productDiv);
+    });
+  }
+  function sendProductId(product_id){
+    console.log("获取到的'前端'的产品id为: "+product_id)
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `http://localhost:8080/user/product/getById/`+product_id, true);
+
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText);
+      }
+    };
+    xhr.send();
+    window.location.href = `http://localhost:8080/front/pages/user/product/商品详情.html?product_id=`+product_id;
+  }
+  fetchProducts()
+</script>
+
+</body>
+</html>
+
