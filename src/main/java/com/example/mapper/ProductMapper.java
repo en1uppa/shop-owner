@@ -1,6 +1,7 @@
 package com.example.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.example.entity.Comment;
 import com.example.entity.Order;
 import com.example.entity.Product;
 import com.example.vo.ProductVo;
@@ -40,6 +41,12 @@ public interface ProductMapper extends BaseMapper<Product> {
 
     @Select("select image_url from `product` where product_id = #{product_id}")
     String getImgByProductId(Integer product_id);
+
+    @Select("select * from `comment` where product_id = #{product_id}")
+    List<Comment> listComment(Integer productId);
+
+    @Insert("insert into `comment` (product_id, user_id, content) values (#{product_id}, #{user_id}, #{content})")
+    void addComment(Comment comment);
 }
 
 

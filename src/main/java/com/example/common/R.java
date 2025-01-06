@@ -17,6 +17,7 @@ public class R<T> {
         R<T> r = new R<>();
         r.setCode(200);
         r.setData(data);
+        r.msg="响应成功";
         return r;
     }
     public static <T> R<T> error(String msg){

@@ -5,7 +5,7 @@
     <style>
         body {
         font-family: Arial, sans-serif;
-        background-color: #f5deb3;
+        background: linear-gradient(to bottom, #00BFFF, #1E90FF, #4682B4); ;
         color: #333;
     }
     .orderList {
@@ -78,11 +78,28 @@
               <p>订单完成时间: ${order.endTime}</p>
               <p>订单地点: ${order.destination}</p>
             </div>
+            <button onclick="receiveByOrderId(${order_id})">收货</button>
             <button onclick="deleteByOrderId(${order_id})">删除</button>
             `;
             orderList.appendChild(orderDiv);
         });
     }
+
+    function receiveByOrderId(order_id){
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', `http://localhost:8080/user/order/receiveOrder/`+order_id, true);
+
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send();
+        window.location.reload()
+    }
+
+
     function deleteByOrderId(order_id){
         var xhr = new XMLHttpRequest();
         xhr.open('DELETE', `http://localhost:8080/user/order/deleteOrderByUser/`+order_id, true);

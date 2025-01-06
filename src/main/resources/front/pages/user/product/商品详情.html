@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Noto Serif SC', serif;
-            background-color: #F5DEB3; /* 茶色背景 */
+            background: linear-gradient(to bottom, #00BFFF, #1E90FF, #4682B4); ; /*蓝色背景*/
             color: #333;
             margin: 0;
             padding: 0;
@@ -15,7 +15,7 @@
         /* 商品信息标题 */
         h2 {
             font-size: 20px;
-            color: #5D4037; /* 深茶色文字 */
+           color: #6495ED; /* 柔和的蓝色 */; /* 深茶色文字 */
             margin-bottom: 10px;
         }
 
@@ -43,7 +43,7 @@
             text-decoration: none;
             outline: none;
             color: #fff;
-            background-color: #d7be8b; /* 蓝色背景 */
+            background-color: #3763d3; /* 蓝色背景 */
             border: none;
             border-radius: 4px; /* 圆角 */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.12); /* 阴影 */
@@ -52,8 +52,15 @@
     </style>
 </head>
 <body>
-<div id="productDetailContainer" class="product-detail-container">
+<div id="productDetailContainer" class="product-detail-container"></div>
+<div id="commentsContainer" class="comment-detail-container">
 </div>
+<form id="commentForm">
+    <input type="text" id="comment" placeholder="内容" required>
+    <button type="submit">提交评论</button>
+</form>
+
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <button onclick="judgeStatus()" id="addCart">加入购物车</button>
 <script>
@@ -61,6 +68,40 @@
     var urlParams = new URLSearchParams(window.location.search);
     var productId1 = urlParams.get('product_id');
     const userId1=localStorage.getItem('user_id')
+
+    async function update(commentData) {
+        try {
+            const response = await fetch(`http://localhost:8080/user/comment/addComment/`, {
+                method: 'POST', // 或者其他适合的方法，根据后端API设计
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(commentData),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            alert("评论已经发送！");
+            window.location.reload()
+            // 可以考虑刷新页面或重新获取用户信息
+        } catch (error) {
+            console.error('Update problem:', error);
+            alert("更新个人信息失败，请重试。");
+        }
+    }
+
+    // 绑定表单提交事件
+    document.getElementById('commentForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+        const commentData = {
+            content: document.getElementById('comment').value,
+            product_id: productId1,
+            user_id: localStorage.getItem('user_id'),
+        };
+        update(commentData);
+    });
+
+
 
 
     function addCart(){
@@ -106,7 +147,27 @@
             console.error('Fetch problem:', error);
             document.getElementById('productDetailContainer').innerText = '获取商品详情时发生错误，请稍后重试。';
         }
+        fetchProductComments(productId1)
     }
+
+    async function fetchProductComments(productId) {
+        try {
+            // 发送请求获取商品评论
+            const response = await fetch(`http://localhost:8080/user/comment/listComment/${productId}`);
+            console.log("的萨芬吧",response)
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const comments = await response.json();
+
+            // 显示商品评论到页面的评论区域
+            displayProductComments(comments);
+        } catch (error) {
+            console.error('Fetch problem:', error);
+            document.getElementById('commentsContainer').innerText = '获取评论时发生错误，请稍后重试。';
+        }
+    }
+
 
     async function getKeeperStatus1(){
         try {
@@ -136,6 +197,30 @@
                 <img src="${product.image_url}" alt="${product.product_name}" class="product-image">
             `;
     }
+
+    function displayProductComments(comments) {
+        const container = document.getElementById('commentsContainer');
+        container.innerHTML = '';  // 清空当前评论区域
+
+        if (comments.length === 0) {
+            container.innerHTML = `
+            <p style="text-align: center; font-size: 16px; color: #999;">暂无评论</p>
+        `;
+            return;
+        }
+
+        comments.forEach(comment => {
+            container.innerHTML += `
+            <div class="comment" style="margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <p style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">${comment.user_name}</p>
+                <p style="font-size: 14px; color: #555; line-height: 1.6;">${comment.content}</p>
+                <p style="font-size: 12px; color: #aaa; text-align: right;">${new Date(comment.createtime).toLocaleString()}</p>
+            </div>
+        `;
+        });
+    }
+
+
     document.addEventListener('DOMContentLoaded', fetchProductDetail);
 </script>
 </body>

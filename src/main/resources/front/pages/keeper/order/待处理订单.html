@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5deb3; /* 浅米色背景 */
+            background: linear-gradient(to bottom, #c5d8e0, #acc1da, #b9cde0); ; /* 浅米色背景 */
             color: #333;
         }
         table {
@@ -23,7 +23,7 @@
             text-align: left;
         }
         th {
-            background-color: #d7be8b; /* 赭石色背景 */
+            background-color: #3e6fe0; /* 赭石色背景 */
             color: white;
             font-weight: bold;
             text-transform: uppercase;
@@ -32,7 +32,7 @@
             text-align: center;
         }
         button {
-            background-color: #d7be8b; /* 按钮颜色与标题背景一致 */
+            background-color: #4372e8; /* 按钮颜色与标题背景一致 */
             color: white;
             border: none;
             padding: 6px 12px;
@@ -40,7 +40,7 @@
             margin-right: 5px;
         }
         button:hover {
-            background-color: #dab052; /* 悬停时加深按钮颜色 */
+            background-color: #4d92ee; /* 悬停时加深按钮颜色 */
         }
     </style>
 </head>
@@ -54,6 +54,7 @@
         <th>结束时间</th>
         <th>目的地</th>
         <th>订单状态</th>
+        <th>收货状态</th>
         <th>是否接单</th>
     </tr>
     </thead>
@@ -89,14 +90,18 @@
           <td>${order.endTime}</td>
           <td>${order.destination}</td>
           <td class="order-status">${order.status}</td>
+          <td>${order.receive_status}</td>
           <td>
               <button onclick="acceptOrder(${order.order_id})">接单</button>
               <button onclick="rejectOrder(${order.order_id})">拒单</button>
           </td>
         `;
-            if (order.status === '已接单,订单完成') {
-                row.querySelector('.order-status').style.color = 'green';
+            if (order.status === '已接单,等待客户收货') {
+                row.querySelector('.order-status').style.color = 'yellow';
                 //同时隐藏接单按钮
+                row.querySelector('td:last-child').style.display = 'none';
+            }else if (order.status === '订单完成') {
+                row.querySelector('.order-status').style.color = 'green';
                 row.querySelector('td:last-child').style.display = 'none';
             } else if (order.status === '商家已拒单') {
                 row.querySelector('.order-status').style.color = '#4e5254';

@@ -6,7 +6,7 @@
   <title>Login Form</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>    body {
-    background-color: #F5DEB3;
+    background: linear-gradient(to bottom, #99becb, #c2d3e3, #b7ccdc); ;
     font-family: 'Noto Serif SC', serif;
     background-size: cover;
     display: flex;
@@ -18,7 +18,7 @@
     color: #333;
   }
   #registerForm {
-    background-color: rgba(215, 189, 139, 0.99); /* 茶色背景 */
+     background-color: rgba(135, 206, 235, 0.99); /*蓝色背景*/
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -28,7 +28,7 @@
   label {
     display: block;
     margin-bottom: 5px;
-    color: #5D4037;
+   color: #6495ED; /* 柔和的蓝色 */;
   }
   input[type="text"],
   input[type="password"],
@@ -39,24 +39,24 @@
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #fff;
+    background-color: #87a0eb;
   }
   button[type="submit"] {
     width: 60%;
     padding: 10px;
-    background-color: #8B4513; /* 赭石色按钮 */
+    background-color: #87CEEB;  /* 赭石色按钮 */
     border: none;
-    color: white;
+    color: #87beeb;
     cursor: pointer;
     border-radius: 5px;
     font-weight: bold;
   }
   button[type="submit"]:hover {
-    background-color: #A0522D; /* 更深的赭石色 */
+    background-color: #365eb6; /* 更深的赭石色 */
   }
   h3 {
     text-align: center;
-    color: #5D4037; /* 深茶色文字 */
+   color: #6495ED; /* 柔和的蓝色 */; /* 深茶色文字 */
     margin-bottom: 15px;
   }
   .desc {
@@ -113,7 +113,7 @@
         }
       });
       alert("注册成功!")
-      window.location.href = "登录.html";
+      window.location.href = "用户登录.html";
     });
 
   });

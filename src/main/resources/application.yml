@@ -2,10 +2,10 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/xzshop?useSSL=false&serverTimeZone=UTC
+    url: jdbc:mysql://localhost:3306/xzshop?useSSL=false&serverTimeZone=UTC&allowPublicKeyRetrieval=true
     username: enjuppa
     password: 287452WTsl
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   main:
     allow-circular-references: true

@@ -33,8 +33,6 @@ public class cartController {
     @Autowired
     private ProductMapper productMapper;
 
-    @Autowired
-    private UserMapper userMapper;
 
     /**
      * 获取个人购物车
@@ -74,7 +72,7 @@ public class cartController {
         for (int i = 0; i < productIdList1.size(); i++){
             ProductVo productVo = productCartMapper.getProductVo(productIdList1.get(i));//为每个Vo对象新建一个封装
             productVo.setProduct_id(productIdList1.get(i));
-            productVo.setBuy_num(productCartMapper.getNumByProductId(productIdList1.get(i)));//设置原模板已购买数量
+            productVo.setBuy_num(productCartMapper.getNumByProductId(productIdList1.get(i),cartID));//设置原模板已购买数量
 //            System.out.println("创建的每个对象:"+productVo);
             productVoList.add(productVo);
         }
@@ -83,12 +81,12 @@ public class cartController {
 
 
         //通过productIdList的索引,循环获取productVo对象列表
-        for (int i = 0; i < productIdList1.size(); i++) {
-            //购物车的商品信息展示(包括书名,图片)和他的价格(product表)
-            productVoList.get(i).setProduct_price(productMapper.getPriceByProductId(productIdList1.get(i)));
-            productVoList.get(i).setProduct_name(productMapper.getProductNameByProductId(productIdList1.get(i)));
-            productVoList.get(i).setImage_url(productMapper.getImgByProductId(productIdList1.get(i)));
-        }
+//        for (int i = 0; i < productIdList1.size(); i++) {
+//            //购物车的商品信息展示(包括书名,图片)和他的价格(product表)
+////            productVoList.get(i).setProduct_price(productMapper.getPriceByProductId(productIdList1.get(i)));
+//            productVoList.get(i).setProduct_name(productMapper.getProductNameByProductId(productIdList1.get(i)));
+//            productVoList.get(i).setImage_url(productMapper.getImgByProductId(productIdList1.get(i)));
+//        }
         //将产品对象列表添加到cartVo对象中
         cartVo.setProductVoList(productVoList);
 
@@ -110,7 +108,7 @@ public class cartController {
     @GetMapping("/addCart/{user_id}/{product_id}")
     public Cart addUserCart(@PathVariable("user_id") Integer user_id, @PathVariable("product_id") Integer product_id) {
 
-        //添加一条productCart一个一(cart)对多(product)的数据,首次添加一个商品的时候就创建购物车了
+        //添加一条productCart一个(cart)对多(product)的数据,首次添加一个商品的时候就创建购物车了
         ProductCart  productCart = new ProductCart();
         productCart.setProduct_id(product_id);//productCart表中插入商品id
 
@@ -194,11 +192,14 @@ public class cartController {
     @DeleteMapping("/minusProduct/{cart_id}/{product_id}")
     public String minusProduct(@PathVariable("cart_id") Integer cart_id,@PathVariable("product_id") Integer product_id) {
         try {
-            Boolean flag= productCartMapper.minusProductCart(cart_id);
+            System.out.println("后端接收11111：cart_id:"+cart_id);
+            System.out.println("后端接收11111：product_id:"+product_id);
+            Boolean flag= productCartMapper.minusProductCart(cart_id,product_id);
+
             if (!flag) {
                 throw new CustomException("商品数量不能小于1!");
             }
-            System.out.println("后端minus方法运行成功");
+            System.out.println("");
             return "商品-1成功!";
         } catch (Exception e) {
             return "商品-1失败!";

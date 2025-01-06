@@ -7,6 +7,8 @@ import com.example.mapper.ProductMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,13 +63,34 @@ public class productController {
      * @param product
      * @return
      */
+//    @PutMapping("/update")
+//    public void update(@RequestBody Product product) {
+//        System.out.println("参数:"+product);
+//        Product product1 = new Product();
+//        BeanUtils.copyProperties(product, product1);
+//        System.out.println("product1:"+product1);
+//        productMapper.updateProduct(product1);
+//    }
     @PutMapping("/update")
-    public void update(@RequestBody Product product) {
-        System.out.println("参数:"+product);
+    public ResponseEntity<?> update(@RequestBody Product product) {
+        System.out.println("参数:" + product);
+
+        // 使用一个临时变量复制属性
         Product product1 = new Product();
         BeanUtils.copyProperties(product, product1);
-        System.out.println("product1:"+product1);
-        productMapper.updateProduct(product1);
+        System.out.println("product1:" + product1);
+
+        // 调用更新方法并检查返回值
+        int result = productMapper.updateProduct(product1);
+        if (result == 0) {
+            // 更新失败，返回 500 状态码
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(R.error("更新失败"));
+        }
+
+        // 更新成功，返回 200 状态码
+        return ResponseEntity.ok(R.success( "更新成功"));
     }
+
 }
 

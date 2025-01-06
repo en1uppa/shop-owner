@@ -4,26 +4,26 @@
   <meta charset="UTF-8">
   <style>    body {
     font-family: 'Noto Serif SC', serif;
-    background-color: #F5DEB3; /* 茶色背景 */
+   background: linear-gradient(to bottom, #D3D3D3, #A9A9A9, #808080); /* 灰色渐变背景 */
     color: #333;
     margin: 0;
     padding: 0;
   }
   h1 {
     text-align: center;
-    color: #5D4037; /* 深茶色标题 */
+   color: #6495ED; /* 柔和的蓝色 */; /* 深茶色标题 */ color: #6495ED; /* 柔和的蓝色 */
     margin-bottom: 20px;
   }
   /* 调整超链接样式 */
   a {
     float:right;
-    color: #8B4513; /* 赭石色作为链接的基本颜色 */
+     color: #87a0eb;  /* 赭石色作为链接的基本颜色 */
     text-decoration: none;
     transition: color 0.3s ease; /* 平滑过渡效果 */
     margin-right: 10px;
   }
   a:hover {
-    color: #A0522D; /* 悬停时颜色略深，以增加交互感 */
+    color: #87CECA; /* 悬停时颜色略深，以增加交互感 */
     text-decoration: underline;
   }
   .product img {
@@ -42,7 +42,7 @@
     /*圆角*/
     border-radius: 15px;
     width: 1450px;
-    background-color: #d7be8b;
+    background-color: #87BDCA;
     display: flex;
     align-items: flex-start;
     margin-bottom: 20px;
@@ -50,7 +50,7 @@
   </style>
 </head>
 <body>
-<h1>小仲购物</h1>
+<h1>商城</h1>
 &nbsp;&nbsp;
 <a href="用户注册.html">注册</a>
 <a href="用户登录.html">用户登录|</a>
@@ -64,6 +64,8 @@
 <script>
   function fetchProducts() {
     const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://localhost:8080/user/product/list', true);
+    xhr.send();
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4 && xhr.status === 200) {
         console.log("打印测试"+xhr.responseText)
@@ -74,8 +76,6 @@
       }
     };
 
-    xhr.open('GET', 'http://localhost:8080/user/product/list', true);
-    xhr.send();
   }
 
   // 显示产品列表
@@ -109,19 +109,89 @@
   function sendProductId(product_id){
     console.log("获取到的'前端'的产品id为: "+product_id)
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', `http://localhost:8080/user/product/getById/`+product_id, true);
 
-    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    // xhr.open('GET', `http://localhost:8080/user/product/getById/`+product_id, true);
+
+    // xhr.setRequestHeader('Content-Type', 'application/json');
+    // xhr.send();
+   window.location.href = `http://localhost:8080/front/pages/游客商品详情.html?product_id=`+product_id;
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
         console.log(xhr.responseText);
       }
     };
-    xhr.send();
-    window.location.href = `http://localhost:8080/front/pages/游客商品详情.html?product_id=`+product_id;
+
   }
-  fetchProducts()
+   fetchProducts()
 </script>
+<!--<script>-->
+<!--  async function fetchProducts() {-->
+<!--    try {-->
+<!--      const response = await fetch('http://localhost:8080/user/product/list');-->
+<!--      if (!response.ok) {-->
+<!--        throw new Error(`Fetch failed: ${response.statusText}`);-->
+<!--      }-->
+<!--      const products = await response.json();-->
+<!--      displayProducts(products);-->
+<!--    } catch (error) {-->
+<!--      console.error('Error fetching products:', error);-->
+<!--      alert('无法加载产品列表，请稍后再试！');-->
+<!--    }-->
+<!--  }-->
+
+<!--  function displayProducts(products) {-->
+<!--    const productList = document.getElementById('productList'); // 获取模块元素-->
+<!--    productList.innerHTML = ''; // 初始化-->
+
+<!--    products.forEach((product) => {-->
+<!--      const productDiv = document.createElement('div'); // 创建 div-->
+<!--      productDiv.className = 'product'; // 设置类名-->
+<!--      productDiv.innerHTML = `-->
+<!--        <div onclick="sendProductId(${product.product_id})">-->
+<!--          <br />-->
+<!--          <img src="${encodeURI(product.image_url)}" alt="${encodeURI(product.product_name)}" />-->
+<!--          <div style="flex: 1; float: left;">-->
+<!--            <p style="font-size: 18px; margin-bottom: 5px;">商品名称: ${sanitize(-->
+<!--              product.product_name-->
+<!--      )}</p>-->
+<!--            <p style="font-size: 14px; color: #999; margin-bottom: 10px;">商品库存数量: ${-->
+<!--              product.product_num-->
+<!--      }</p>-->
+<!--            <p style="font-size: 14px; line-height: 1.5;">商品描述: ${sanitize(-->
+<!--              product.description-->
+<!--      )}</p>-->
+<!--            <p style="font-size: 16px; color: #f00; margin-bottom: 5px;">-->
+<!--              <b style="font-size: 25px;">￥${product.product_price.toFixed(-->
+<!--              2-->
+<!--      )}</b>-->
+<!--            </p>-->
+<!--            <br />-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      `;-->
+<!--      productList.appendChild(productDiv);-->
+<!--    });-->
+<!--  }-->
+
+<!--  function sendProductId(productId) {-->
+<!--    console.log("获取到的'前端'的产品id为: " + productId);-->
+<!--    // 跳转到详情页-->
+<!--    window.location.href = `http://localhost:8080/front/pages/游客商品详情.html?product_id=${encodeURIComponent(-->
+<!--            productId-->
+<!--    )}`;-->
+<!--  }-->
+
+<!--  // 防止 XSS 的辅助函数-->
+<!--  function sanitize(str) {-->
+<!--    const div = document.createElement('div');-->
+<!--    div.textContent = str;-->
+<!--    return div.innerHTML;-->
+<!--  }-->
+
+<!--  // 页面加载时获取产品列表-->
+<!--  fetchProducts();-->
+<!--</script>-->
 
 </body>
 </html>

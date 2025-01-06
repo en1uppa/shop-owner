@@ -19,13 +19,14 @@ import java.util.List;
 * @Entity generator.domain.Order
 */
 public interface OrderMapper extends BaseMapper<Order> {
-    @Select("select user.user_name,`order`.order_id,`order`.createTime,`order`.endTime,`order`.destination,`order`.status from user,`order`\n" +
+    @Select("select user.user_name,`order`.order_id,`order`.createTime,`order`.endTime,`order`.destination,`order`.status, `order`.receive_status from user,`order`\n" +
             "            where user.user_id = `order`.user_id")
     List<OrderVo> getUnfinishOrderList();
 
-    @Select("select user.user_name,`order`.order_id,`order`.createTime,`order`.endTime,`order`.destination,`order`.status from user,`order`\n" +
-            "            where user.user_id = `order`.user_id" +
-            "            and `order`.status='商家已拒单'or `order`.status='已接单,订单完成'")
+    @Select("SELECT user.user_name, `order`.order_id, `order`.createTime, `order`.endTime, `order`.destination, `order`.status, `order`.receive_status " +
+            "FROM user " +
+            "JOIN `order` ON user.user_id = `order`.user_id " +
+            "WHERE `order`.status IN ('商家已拒单', '订单完成', '已接单,等待客户收货')")
     List<OrderVo> getFinishOrderList();
 
 
@@ -36,10 +37,10 @@ public interface OrderMapper extends BaseMapper<Order> {
     Order getOrderById(Integer orderId);
 
 
-    @Update("update `order` set status = #{status},endTime = #{endTime} where order_id = #{order_id}")
+    @Update("update `order` set status = #{status},endTime = #{endTime},receive_status=#{receive_status}  where order_id = #{order_id}")
     void updateOrder(Order order);
 
-    @Select("select u.user_name,o.order_id, o.createTime, o.endTime, o.destination, o.status " +
+    @Select("select u.user_name,o.order_id, o.createTime, o.endTime, o.destination, o.status, o.receive_status " +
             "from user u ,`order` o " +
             "where u.user_id=o.user_id " +
             "and o.user_id=#{userId}")
@@ -67,8 +68,8 @@ public interface OrderMapper extends BaseMapper<Order> {
     @Select("select * from `order` where order_id = #{orderId}")
     Order getOrderDetails(Integer orderId);
 
-    @Select("select order_id from `order` where user_id = #{userId}")
-    Integer getOrderId(Integer userId);
+    @Select("SELECT order_id FROM `order` WHERE user_id = #{userId} ORDER BY order_id DESC LIMIT 1")
+    Integer getNewOrderId(Integer userId);
 
     ProductVo getProductVo1(Integer productId);
 }

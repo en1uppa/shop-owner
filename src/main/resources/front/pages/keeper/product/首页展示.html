@@ -6,26 +6,26 @@
   <title>产品列表</title>
   <style>    body {
     font-family: 'Noto Serif SC', serif;
-    background-color: #F5DEB3; /* 茶色背景 */
+    background: linear-gradient(to bottom, #9cb2b6, #9fa9b2, #d6e0e8); ; /*蓝色背景*/
     color: #333;
     margin: 0;
     padding: 0;
   }
   h1 {
     text-align: center;
-    color: #5D4037; /* 深茶色标题 */
+   color: #6495ED; /* 柔和的蓝色 */; /* 深茶色标题 */
     margin-bottom: 20px;
   }
   /* 调整超链接样式 */
   a {
     float:right;
-    color: #8B4513; /* 赭石色作为链接的基本颜色 */
+     color: #87CEEB;  /* 赭石色作为链接的基本颜色 */
     text-decoration: none;
     transition: color 0.3s ease; /* 平滑过渡效果 */
     margin-right: 10px;
   }
   a:hover {
-    color: #A0522D; /* 悬停时颜色略深，以增加交互感 */
+    color: #284cc2; /* 悬停时颜色略深，以增加交互感 */
     text-decoration: underline;
   }
   .product img {
@@ -44,7 +44,7 @@
     /*圆角*/
     border-radius: 15px;
     width: 1450px;
-    background-color: #d7be8b;
+    background-color: #5a8dda;
     display: flex;
     align-items: flex-start;
     margin-bottom: 20px;
@@ -58,7 +58,7 @@
     text-decoration: none;
     outline: none;
     color: #fff;
-    background-color: #d7be8b; /* 蓝色背景 */
+    background-color: #85806d; /* 蓝色背景 */
     border: none;
     border-radius: 4px; /* 圆角 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.12); /* 阴影 */
@@ -66,18 +66,18 @@
   }
 
   #open_close:hover {
-    background-color: #8B4513; /* 鼠标悬停时颜色变深 */
+    background-color: #87beeb;  /* 鼠标悬停时颜色变深 */
   }
 
   #open_close:active {
-    background-color: #d7be8b; /* 鼠标点击时颜色不变 */
+    background-color: #6c6963; /* 鼠标点击时颜色不变 */
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 5px rgba(0, 0, 0, 0.1); /* 鼠标点击时阴影变深 */
     transform: translateY(4px); /* 鼠标点击时按钮稍微下移 */
   }
   </style>
 </head>
 <body>
-<h1>小仲购物</h1>
+<h1>商城</h1>
 &nbsp;&nbsp;
 <span style="color: #694c41;">右键实现开店|关店</span>
 <button class="nav-link" id="open_close" onclick="setKeeperStatus()"></button>
@@ -135,16 +135,16 @@
   }
     function sendProductId(product_id){
     console.log("获取到的'前端'的产品id为: "+product_id)
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', `http://localhost:8080/keeper/product/getById/`+product_id, true);
+    // var xhr = new XMLHttpRequest();
+    // xhr.open('GET', `http://localhost:8080/keeper/product/getById/`+product_id, true);
 
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log(xhr.responseText);
-      }
-    };
-    xhr.send();
+    // xhr.setRequestHeader('Content-Type', 'application/json');
+    // xhr.onreadystatechange = function () {
+    //   if (xhr.readyState === 4 && xhr.status === 200) {
+    //     console.log(xhr.responseText);
+    //   }
+    // };
+    // xhr.send();
     window.location.href = `http://localhost:8080/front/pages/keeper/product/商品详情&商品修改.html?product_id=`+product_id;
   }
 

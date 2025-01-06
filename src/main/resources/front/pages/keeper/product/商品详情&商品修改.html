@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Noto Serif SC', serif;
-            background-color: #F5DEB3; /* 茶色背景 */
+            background: linear-gradient(to bottom, #00BFFF, #1E90FF, #4682B4); ; /*蓝色背景*/
             color: #333;
             margin: 0;
             padding: 0;
@@ -15,7 +15,7 @@
         /* 商品信息标题 */
         h2 {
             font-size: 20px;
-            color: #5D4037; /* 深茶色文字 */
+           color: #6495ED; /* 柔和的蓝色 */; /* 深茶色文字 */
             margin-bottom: 10px;
         }
 
@@ -84,6 +84,8 @@
               <p style="font-size: 16px; color: #f00; margin-bottom: 5px;text-align: center"><b style="font-size: 25px;">￥${product.product_price}</b></p>
                 <img src="${product.image_url}" alt="${product.product_name}" class="product-image">
             `;
+
+        document.getElementById('imageUrlInput').value = product.image_url;
     }
     document.addEventListener('DOMContentLoaded', fetchProductDetail);
 

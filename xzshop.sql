@@ -5,13 +5,13 @@
  Source Server Type    : MySQL
  Source Server Version : 50724
  Source Host           : localhost:3306
- Source Schema         : xzshop
+ Source Schema         : shop
 
  Target Server Type    : MySQL
  Target Server Version : 50724
  File Encoding         : 65001
 
- Date: 23/06/2024 02:55:47
+ Date: 12/12/2024 02:55:47
 */
 
 SET NAMES utf8mb4;

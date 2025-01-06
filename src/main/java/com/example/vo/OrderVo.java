@@ -26,5 +26,7 @@ public class OrderVo{
 
     private String status;
 
+    private String receive_status;
+
     private static final long serialVersionUID = 1L;
 }

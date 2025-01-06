@@ -21,19 +21,6 @@ public interface CartMapper extends BaseMapper<Cart> {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     //通过cart_id获取用户购买的商品
     @Select("select cart_id from cart where user_id = #{user_id}")
     Integer getCartID(@Param("user_id")Integer user_id);

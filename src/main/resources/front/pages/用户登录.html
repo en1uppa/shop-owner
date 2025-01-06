@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 </head>
 <style>    body {
-    background-color: #F5DEB3;
+    background: linear-gradient(to bottom, #c9dde5, #c6d7e5, #4682B4); ;
     font-family: 'Noto Serif SC', serif;
     background-size: cover;
     display: flex;
@@ -17,7 +17,7 @@
 }
 .Box {
 
-    background-color: rgba(215, 189, 139, 0.99); /* 茶色背景 */
+     background-color: rgba(135, 206, 235, 0.99); /*蓝色背景*/
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -26,7 +26,7 @@
 }
 h3 {
     text-align: center;
-    color: #5D4037; /* 深茶色文字 */
+   color: #6495ED; /* 柔和的蓝色 */; /* 深茶色文字 */
     margin-bottom: 15px;
 }
 .desc {
@@ -43,12 +43,12 @@ input[type="password"] {
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #fff;
+    background-color: #5a8dda;
 }
 .loginBtn {
     width: 60%;
     padding: 10px;
-    background-color: #8B4513; /* 赭石色按钮 */
+    background-color: #87beeb;  /* 赭石色按钮 */
     border: none;
     color: white;
     cursor: pointer;
@@ -56,14 +56,14 @@ input[type="password"] {
     font-weight: bold;
 }
 .loginBtn:hover {
-    background-color: #A0522D; /* 更深的赭石色 */
+    background-color: #87CDEB; /* 更深的赭石色 */
 }
 .no {
     text-align: center;
     margin-top: 20px;
 }
 .no a {
-    color: #8B4513; /* 赭石色链接 */
+     color: #87CEEB;  /* 赭石色链接 */
     text-decoration: none;
 }
 .no a:hover {
@@ -73,7 +73,7 @@ input[type="password"] {
 <script src="https://cdn.jsdelivr.net/npm/bubbly-bg@0.2.3/dist/bubbly-bg.js"></script>
 <body>
     <div class="Box">
-        <form action="/user/login">
+        <form>
         <h3>登录</h3>
         <p class="desc">WELCOME LOGIN</p>
         <input type="text" placeholder="请输入用户名" required>
@@ -110,7 +110,7 @@ input[type="password"] {
                     const user_id=xhr.responseText;
 
                     localStorage.setItem('user_id',user_id);
-                    // window.location.href = "../pages/user/product/首页展示.html";
+                     window.location.href = "../pages/user/product/首页展示.html";
                 } else {
 
                     alert('登录失败：' + xhr.responseText);

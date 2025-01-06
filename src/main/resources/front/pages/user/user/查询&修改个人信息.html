@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>个人信息展示与修改</title>
   <style>    body {
-    background-color: #f5deb3;
+    background: linear-gradient(to bottom, #00BFFF, #1E90FF, #4682B4); ;
     font-family: Arial, sans-serif;
     text-align: center;
     color: #333;
@@ -37,7 +37,7 @@
     box-sizing: border-box;
   }
   button {
-    background-color: #8B4513; /* 深茶色按钮背景 */
+    background- color: #87CEEB;  /* 深茶色按钮背景 */
     color: white;
     border: none;
     padding: 10px 20px;
@@ -82,8 +82,9 @@
 
   function displayUserProfile(user) {
     const UserInfo = document.getElementById('UserInfo');
+    const imgUrl = user.img_url || 'default_image_url.jpg';
     UserInfo.innerHTML = `
-        <img src="${user.img_url}" alt="用户头像" class="user-pic">
+        <img src="${imgUrl}" alt="用户头像" class="user-pic">
         <p><strong>姓名:</strong>${user.user_name}</p>
         <p><strong>密码:</strong>${user.password}</p>
         <p><strong>电话:</strong> ${user.tel}</p>
@@ -120,12 +121,12 @@
   // 绑定表单提交事件
   document.getElementById('updateForm').addEventListener('submit', function(event) {
     event.preventDefault(); // 阻止表单默认提交行为
-    const userId = 1; // 假设用户ID
     const updatedData = {
       user_name: document.getElementById('userNameInput').value,
       password: document.getElementById('passwordInput').value,
       tel: document.getElementById('telInput').value,
       email: document.getElementById('emailInput').value,
+
     };
     updateUserProfile(updatedData);
   });
@@ -135,3 +136,4 @@
 </script>
 </body>
 </html>
+

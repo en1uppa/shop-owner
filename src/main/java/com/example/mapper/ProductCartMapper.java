@@ -21,8 +21,8 @@ public interface ProductCartMapper extends BaseMapper<ProductCart> {
     @Insert("INSERT INTO `product_cart` (cart_id, product_id, product_price) VALUES (#{cart_id}, #{product_id}, #{product_price})")
     void addProductCart(ProductCart productCart);
 
-    @Select("select count(*) from `product_cart` where product_id = #{productId}")
-    Integer getNumByProductId(Integer productId);
+    @Select("select count(*) from `product_cart` where product_id = #{productId} AND cart_id=#{cartId}")
+    Integer getNumByProductId(@Param("productId") Integer productId,@Param("cartId") Integer cartId);
 
     @Select("select product_id from `product_cart` where cart_id=#{cartId}")
     List<Integer> getList(Integer cartId);
@@ -33,17 +33,29 @@ public interface ProductCartMapper extends BaseMapper<ProductCart> {
     @Select("select * from `product_cart` where product_id=#{productId} and cart_id=#{cartId}")
     ProductCart getProductCart(Integer productId, Integer cartId);
 
+//    @Delete("DELETE FROM product_cart\n" +
+//            "WHERE product_cart_id IN (\n" +
+//            "    SELECT temp.product_cart_id\n" +
+//            "    FROM (\n" +
+//            "             SELECT MIN(pc.product_cart_id) as product_cart_id\n" +
+//            "             FROM product_cart pc\n" +
+//            "             GROUP BY pc.cart_id\n" +
+//            "         ) AS temp\n" +
+//            ")\n" +
+//            "and cart_id=#{cartId};")
+//    Boolean minusProductCart(Integer cartId,Integer product_id);
     @Delete("DELETE FROM product_cart\n" +
             "WHERE product_cart_id IN (\n" +
             "    SELECT temp.product_cart_id\n" +
             "    FROM (\n" +
             "             SELECT MIN(pc.product_cart_id) as product_cart_id\n" +
             "             FROM product_cart pc\n" +
+            "             WHERE pc.cart_id = #{cartId} AND pc.product_id = #{productId}\n" +
             "             GROUP BY pc.cart_id\n" +
             "         ) AS temp\n" +
             ")\n" +
-            "and cart_id=#{cartId};")
-    Boolean minusProductCart(Integer cartId);
+            "AND cart_id = #{cartId};")
+    Boolean minusProductCart(@Param("cartId")Integer cartId, @Param("productId")Integer productId);
 
     @Delete("delete from product_cart where cart_id=#{cartId} and product_id=#{productId}")
     Boolean deleteProductCart(@Param("cartId")Integer cartId, @Param("productId")Integer productId);
@@ -55,6 +67,7 @@ public interface ProductCartMapper extends BaseMapper<ProductCart> {
 
     @Delete("delete from product_cart where cart_id=#{cartId}")
     void deleteProductCartData(Integer cartId);
+
 }
 
 

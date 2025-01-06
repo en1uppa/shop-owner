@@ -71,11 +71,13 @@ public class orderController {
     @GetMapping("/acceptOrder/{orderId}")
     public R<String> acceptOrder(@PathVariable Integer orderId) {
         Order order = orderMapper.getOrderById(orderId);
-        order.setEndTime(String.valueOf(LocalDateTime.now()));
-        order.setStatus("已接单,订单完成");
+        order.setEndTime("等待客户接收");
+        order.setStatus("已接单,等待客户收货");
         orderMapper.updateOrder(order);
-        return R.success("接单成功");
+        return R.success("接单成功，等待客户接收");
     }
+
+
 
 
     /**

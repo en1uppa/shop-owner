@@ -26,7 +26,8 @@
     // 获取查询字符串,接收首页传过来的product_id的值
     var urlParams = new URLSearchParams(window.location.search);
     var productId1 = urlParams.get('product_id');
-    const userId1=localStorage.getItem('user_id')
+    console.log(productId1)
+    //const userId1=localStorage.getItem('user_id')
 
     async function fetchProductDetail() {
         try {

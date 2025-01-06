@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -39,10 +40,10 @@ public class orderController {
 //    }
 
 
-    @GetMapping("/getOrderId/{userId}")
-    public Integer getOrderId(@PathVariable  Integer userId) {
+    @GetMapping("/getNewOrderId/{userId}")
+    public Integer getNewOrderId(@PathVariable  Integer userId) {
         System.out.println("后台:userId:"+userId);
-        return orderMapper.getOrderId(userId);
+        return orderMapper.getNewOrderId(userId);
     }
 
     /**
@@ -55,6 +56,27 @@ public class orderController {
     }
 
 
+    /**
+     * 用户是否收到货
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/receiveOrder/{orderId}")
+    public R<String> receiveOrder(@PathVariable Integer orderId) {
+        Order order = orderMapper.getOrderById(orderId);
+        System.out.println("订单状态：" + order.getStatus());
+        if (!"已接单,等待客户收货".equals(order.getStatus())) {
+            return R.error("该订单当前无法收货，状态为：" + order.getStatus());
+        }
+
+        // 更新订单信息
+        order.setEndTime(String.valueOf(LocalDateTime.now()));
+        order.setStatus("订单完成");
+        order.setReceive_status("客户已收货");
+        orderMapper.updateOrder(order);
+
+        return R.success("客户已接收");
+    }
 
     /**
      * 用户查询自己的个人的历史订单

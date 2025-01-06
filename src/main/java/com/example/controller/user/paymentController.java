@@ -3,11 +3,11 @@ package com.example.controller.user;
 import com.example.common.R;
 import com.example.entity.Order;
 import com.example.mapper.OrderMapper;
+import com.example.mapper.ReceivingNoteMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.entity.ReceivingNote;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -17,6 +17,11 @@ public class paymentController {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private ReceivingNoteMapper ReceivingNoteMapper;
+
+    int orderId;
     /**
      *
      * 用户下单
@@ -32,6 +37,7 @@ public class paymentController {
         order.setDestination("广州市海珠区仲恺农业工程学院东沙街24号");
         order.setEndTime("订单尚未完成,完成时间未定..");
         orderMapper.add(order);
+
         return "支付成功";
     }
 
@@ -39,6 +45,19 @@ public class paymentController {
 
 
 
+    @GetMapping("/createReceivingNote/{userId}")
+    public String createReceivingNote(@PathVariable("userId") int userId) {
+        // 模拟创建 ReceivingNote 对象
+        orderId = orderMapper.getNewOrderId(userId);
+        ReceivingNote receivingNote = new ReceivingNote();
+        receivingNote.setUser_id(userId);
+        receivingNote.setOrder_id(orderId); // 调用方法生成 order_id
+        receivingNote.setReceive_status("NO"); // 默认设置接收状态
+        receivingNote.setComment_status("NO"); // 默认设置评论状态
+        ReceivingNoteMapper.add(receivingNote);
+        // 返回创建的 ReceivingNote 对象
+        return "制成收货单";
+    }
 
 
 
